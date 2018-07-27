@@ -15,20 +15,27 @@ procedure AFollari is
  RacksTotal: Integer;
  BikesAvail: Integer;
 
- procedure RackCB(Name : UTF8_String; Value : JSON_Value) is
+ type Rack is record
   StopCode : Unbounded_String;
   StopName : Unbounded_String;
-  Bikes : Integer;
- begin
-  StopCode:=Value.Get("stop_code");
-  StopName:=Value.Get("name");
-  Bikes:=Value.Get("bikes_avail");
+  Bikes : Natural;
+  Slots : Natural;
+  Lat : Float range -90.0 .. 90.0;
+  Lon : Float range -180.0 .. 180.0;
+ end record;
 
-  Put(StopCode);
+ procedure RackCB(Name : UTF8_String; Value : JSON_Value) is
+  R : Rack;
+ begin
+  R.StopCode:=Value.Get("stop_code");
+  R.StopName:=Value.Get("name");
+  R.Bikes:=Value.Get("bikes_avail");
+
+  Put(R.StopCode);
   Put(" ");
-  Put(StopName);
+  Put(R.StopName);
   Put(" ");
-  Put(Bikes);
+  Put(R.Bikes);
 
   New_Line(1);
  end RackCB;
