@@ -36,9 +36,9 @@ procedure AFollari is
 
   Put(R.StopCode);
   Put(" ");
-  Put(R.StopName);
+  Put(R.Bikes, 3);
   Put(" ");
-  Put(R.Bikes);
+  Put(R.StopName);
 
   New_Line(1);
  end RackCB;
@@ -67,6 +67,8 @@ begin
  Put("Bike Load (%):");
  Put(BikeLoad(BikesAvail, BikesTotal), 3, 2, 0);
  New_Line(1);
+
+ Put_Line("ID  Bikes Location");
 
  if FoliData.Has_Field("racks") then
   Racks:=FoliData.Get("racks");
