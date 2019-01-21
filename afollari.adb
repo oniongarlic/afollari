@@ -22,6 +22,7 @@ procedure AFollari is
  BikesAvail: Integer;
  BikesTotal: Integer;
  Updated: Integer;
+ T : Ada.Calendar.Time;
 
  type Rack is record
   StopCode : Unbounded_String;
@@ -62,8 +63,8 @@ procedure AFollari is
  begin
   ClearScreen;
 
-  Put("Updated");
-  Put(Updated);
+  Put("Updated: ");
+  Put(Ada.Calendar.Formatting.Image(T));
   New_Line(1);
 
   Put("Total racks:");
@@ -89,7 +90,7 @@ procedure AFollari is
  end PrintData;
 
  procedure LoadData is
-  Tmp: Long_Integer;
+
  begin
   JSBody:=AWS.Response.Message_Body(AWS.Client.Get(URL => "http://data.foli.fi/citybike"));
   FoliData:=Read(JSBody);
@@ -102,6 +103,7 @@ procedure AFollari is
 
   -- XXX: How to convert from Integer ???
   -- Updated:=To_Ada_Time();
+  T:=Ada.Calendar.Time_Of (Year => 1970, Month => 1, Day => 1) + Duration(Updated);
  end LoadData;
 
 begin
