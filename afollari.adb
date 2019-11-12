@@ -36,8 +36,18 @@ procedure AFollari is
  procedure RackCB(Name : UTF8_String; Value : JSON_Value) is
   R : Rack;
  begin
-  R.StopCode:=Value.Get("stop_code");
+  if Value.Has_Field("stop_code") then
+   R.StopCode:=Value.Get("stop_code");
+  else
+   R.StopCode:=To_Unbounded_String("N/A");
+  end if;
+
   R.StopName:=Value.Get("name");
+
+  if not Value.Has_Field("stop_code") then
+   return;
+  end if;
+
   R.Bikes:=Value.Get("bikes_avail");
 
   Put(R.StopCode);
