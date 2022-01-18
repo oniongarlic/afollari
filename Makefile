@@ -1,7 +1,7 @@
 all: afollari
 
 afollari: afollari.gpr afollari.adb
-	gnatmake -Pafollari.gpr
+	gprbuild -Pafollari.gpr
 
 clean:
 	rm -f *.o afollari
