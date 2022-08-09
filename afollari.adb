@@ -23,6 +23,7 @@ procedure AFollari is
  BikesTotal: Integer;
  Updated: Integer;
  T : Ada.Calendar.Time;
+ RackIndex : Positive;
 
  type Rack is record
   StopCode : Unbounded_String;
@@ -32,6 +33,10 @@ procedure AFollari is
   Lat : Float range -90.0 .. 90.0;
   Lon : Float range -180.0 .. 180.0;
  end record;
+
+ type RackArray is array(Positive range <>) of Rack;
+
+ AllRacks: RackArray(1 .. 50);
 
  procedure RackCB(Name : UTF8_String; Value : JSON_Value) is
   R : Rack;
@@ -50,6 +55,8 @@ procedure AFollari is
 
   R.Bikes:=Value.Get("bikes_avail");
 
+  AllRacks(RackIndex):=R;
+
   Put(R.StopCode);
   Put(" ");
   Put(R.Bikes, 3);
@@ -59,9 +66,30 @@ procedure AFollari is
   New_Line(1);
  end RackCB;
 
+ procedure PrintRack(R : Rack) is
+ begin
+  Put(R.StopCode);
+  Put(" ");
+  Put(R.Bikes, 3);
+  Put(" ");
+  Put(R.StopName);
+  New_Line(1);
+ end PrintRack;
+
+ procedure PrintRacks(RA: RackArray) is
+ begin
+  for I in 0..RacksTotal loop
+   PrintRack(RA(I));
+  end loop;
+  New_Line(1);
+ end PrintRacks;
+
  function BikeLoad(Avail, Total: Integer) return Float is
  begin
-  return 100.0-(Float(Avail)/Float(Total))*100.0;
+  if Total>0 then
+   return 100.0-(Float(Avail)/Float(Total))*100.0;
+  end if;
+  return 0.0;
  end BikeLoad;
 
  procedure ClearScreen is
@@ -91,8 +119,9 @@ procedure AFollari is
 
   Put_Line("ID  Bikes Location");
 
-  if FoliData.Has_Field("racks") then
+  if RacksTotal>0 and FoliData.Has_Field("racks") then
    Racks:=FoliData.Get("racks");
+   RackIndex:=1;
    Map_JSON_Object(Racks, RackCB'Access);
   end if;
 
@@ -119,7 +148,13 @@ procedure AFollari is
 begin
  loop
   LoadData;
+  if RacksTotal=0 then
+    Put_Line("No racks available ?");
+    return;
+  end if;
+
   PrintData;
+  PrintRacks(AllRacks);
   delay Duration(5.0);
   New_Line(1);
  end loop;
